@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SIA — Symbolic Intelligence & Archetypal Systems</title>
+<meta name="description" content="SIA provides archetypal intelligence, dreamworld governance, and symbolic energy management through multi-agent infrastructure." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void: #06060f;
+    --deep: #0a0a1e;
+    --surface: #0f0f24;
+    --gold: #c8a96e;
+    --gold-dim: rgba(200,169,110,0.15);
+    --silver: #a8b8d0;
+    --dawn: #dde8f8;
+    --pulse: #7b9de8;
+    --fog: rgba(168,184,208,0.07);
+    --border: rgba(200,169,110,0.12);
+    --radius: 2px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: var(--void);
+    color: var(--silver);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(200,169,110,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s, opacity 0.3s;
+  }
+
+  /* Canvas background */
+  canvas#stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Noise overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  main { position: relative; z-index: 2; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 4rem;
+    border-bottom: 1px solid rgba(200,169,110,0.06);
+    backdrop-filter: blur(20px);
+    background: rgba(6,6,15,0.7);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.3s, color 0.3s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 0 4rem;
+    gap: 4rem;
+    padding-top: 6rem;
+  }
+
+  .hero-left { max-width: 620px; }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  h1.hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 9vw, 8rem);
+    font-weight: 300;
+    line-height: 0.9;
+    color: var(--dawn);
+    letter-spacing: -0.02em;
+    margin-bottom: 2.5rem;
+  }
+  h1.hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-desc {
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--silver);
+    opacity: 0.8;
+    max-width: 480px;
+    margin-bottom: 3rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--void);
+    background: var(--gold);
+    padding: 0.9rem 2rem;
+    border: none;
+    cursor: none;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(200,169,110,0.3);
+    padding: 0.9rem 2rem;
+    cursor: none;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); background: var(--gold-dim); }
+
+  /* Sigil / orb */
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .sigil-wrap {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    animation: float 8s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-18px) rotate(0.5deg); }
+    66% { transform: translateY(8px) rotate(-0.5deg); }
+  }
+  .sigil-wrap svg { width: 100%; height: 100%; }
+
+  /* Glow */
+  .sigil-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(200,169,110,0.15) 0%, transparent 70%);
+    pointer-events: none;
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%,-50%) scale(1.15); }
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 0 4rem;
+    margin: 1rem 0;
+    opacity: 0.3;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .divider span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 7rem 4rem; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .section-label::after {
+    content: '';
+    display: block;
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+  }
+
+  h2.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--dawn);
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+  }
+  h2.section-title em { font-style: italic; color: var(--gold); }
+
+  .section-body {
+    font-size: 1.15rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--silver);
+    opacity: 0.75;
+    max-width: 580px;
+  }
+
+  /* ── CAPABILITIES ── */
+  .capabilities-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin-top: 4rem;
+    border: 1px solid var(--border);
+  }
+
+  .cap-card {
+    padding: 2.5rem 2rem;
+    background: var(--fog);
+    border-right: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+  .cap-card:last-child { border-right: none; }
+  .cap-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .cap-card:hover { background: rgba(200,169,110,0.04); }
+  .cap-card:hover::before { transform: scaleX(1); }
+
+  .cap-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    opacity: 0.5;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .cap-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--dawn);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .cap-card p {
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--silver);
+    opacity: 0.7;
+  }
+
+  /* ── ARCHITECTURE ── */
+  .arch-section {
+    background: var(--deep);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .arch-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .arch-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 3rem;
+  }
+  .arch-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 1.5rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: none;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .arch-item:first-child { border-top: 1px solid var(--border); }
+  .arch-item::after {
+    content: '→';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) translateX(-8px);
+    color: var(--gold);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    font-size: 0.9rem;
+  }
+  .arch-item:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+  .arch-idx {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    opacity: 0.4;
+    padding-top: 0.3rem;
+    letter-spacing: 0.1em;
+  }
+  .arch-item h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--dawn);
+    margin-bottom: 0.35rem;
+  }
+  .arch-item p {
+    font-size: 0.93rem;
+    font-weight: 300;
+    color: var(--silver);
+    opacity: 0.6;
+    line-height: 1.6;
+  }
+
+  /* Diagram placeholder */
+  .arch-diagram {
+    position: relative;
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── USE CASES ── */
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+  .case-card {
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s, transform 0.4s;
+    background: var(--fog);
+  }
+  .case-card:hover { border-color: rgba(200,169,110,0.35); transform: translateY(-4px); }
+  .case-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1.25rem;
+    display: block;
+    opacity: 0.8;
+  }
+  .case-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--dawn);
+    margin-bottom: 0.75rem;
+  }
+  .case-card p {
+    font-size: 0.97rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--silver);
+    opacity: 0.65;
+  }
+  .case-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .case-card:hover::after { opacity: 1; }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 5rem;
+  }
+  .stat-cell {
+    background: var(--void);
+    padding: 2.5rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    text-align: center;
+    padding: 9rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 300;
+    color: var(--dawn);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+  .cta-section h2 em { font-style: italic; color: var(--gold); }
+  .cta-section p {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: var(--silver);
+    opacity: 0.7;
+    max-width: 480px;
+    margin: 0 auto 3rem;
+    line-height: 1.75;
+  }
+  .cta-actions { display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--deep);
+  }
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    opacity: 0.45;
+    transition: opacity 0.3s;
+  }
+  .footer-links a:hover { opacity: 0.8; }
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--silver);
+    opacity: 0.3;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.25rem 2rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 8rem 2rem 4rem; min-height: auto; }
+    .hero-right { display: none; }
+    section { padding: 5rem 2rem; }
+    .capabilities-grid { grid-template-columns: 1fr 1fr; }
+    .arch-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .arch-diagram { display: none; }
+    .cases-grid { grid-template-columns: 1fr 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .divider { padding: 0 2rem; }
+  }
+  @media (max-width: 560px) {
+    .capabilities-grid { grid-template-columns: 1fr; }
+    .cases-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    h1.hero-title { font-size: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="stars"></canvas>
+
+<nav>
+  <a class="nav-logo" href="#">SIA</a>
+  <ul class="nav-links">
+    <li><a href="#capabilities">Capabilities</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#use-cases">Applications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow reveal">Symbolic & Archetypal Intelligence</div>
+      <h1 class="hero-title reveal reveal-delay-1">Dream<br><em>Governance</em><br>Platform</h1>
+      <p class="hero-desc reveal reveal-delay-2">
+        SIA maps and governs the symbolic dimensions of intelligence — converting dreams, archetypes, and narrative patterns into structured governance frameworks and coordination primitives.
+      </p>
+      <div class="hero-actions reveal reveal-delay-3">
+        <a class="btn-primary" href="#capabilities">Explore Capabilities</a>
+        <a class="btn-ghost" href="#architecture">View Architecture</a>
+      </div>
+    </div>
+    <div class="hero-right reveal reveal-delay-2">
+      <div class="sigil-wrap">
+        <div class="sigil-glow"></div>
+        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <defs>
+            <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c8a96e" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#c8a96e" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- Outer rings -->
+          <circle cx="210" cy="210" r="180" stroke="#c8a96e" stroke-opacity="0.08" stroke-width="1"/>
+          <circle cx="210" cy="210" r="155" stroke="#c8a96e" stroke-opacity="0.12" stroke-width="0.5"/>
+          <circle cx="210" cy="210" r="120" stroke="#c8a96e" stroke-opacity="0.18" stroke-width="1"/>
+          <circle cx="210" cy="210" r="80" stroke="#c8a96e" stroke-opacity="0.25" stroke-width="0.5"/>
+          <!-- Outer circle fill -->
+          <circle cx="210" cy="210" r="180" fill="url(#g1)"/>
+          <!-- Hexagram -->
+          <polygon points="210,50 330,165 330,255 210,370 90,255 90,165" stroke="#c8a96e" stroke-opacity="0.2" stroke-width="0.8" fill="none"/>
+          <!-- Inner triangle up -->
+          <polygon points="210,90 330,255 90,255" stroke="#c8a96e" stroke-opacity="0.35" stroke-width="1" fill="none" filter="url(#glow)"/>
+          <!-- Inner triangle down -->
+          <polygon points="210,330 90,165 330,165" stroke="#c8a96e" stroke-opacity="0.35" stroke-width="1" fill="none" filter="url(#glow)"/>
+          <!-- Meridian lines -->
+          <line x1="210" y1="30" x2="210" y2="390" stroke="#c8a96e" stroke-opacity="0.06" stroke-width="0.5"/>
+          <line x1="30" y1="210" x2="390" y2="210" stroke="#c8a96e" stroke-opacity="0.06" stroke-width="0.5"/>
+          <line x1="80" y1="80" x2="340" y2="340" stroke="#c8a96e" stroke-opacity="0.06" stroke-width="0.5"/>
+          <line x1="340" y1="80" x2="80" y2="340" stroke="#c8a96e" stroke-opacity="0.06" stroke-width="0.5"/>
+          <!-- Center dots at sacred intersections -->
+          <circle cx="210" cy="165" r="2.5" fill="#c8a96e" fill-opacity="0.7"/>
+          <circle cx="210" cy="255" r="2.5" fill="#c8a96e" fill-opacity="0.7"/>
+          <circle cx="300" cy="210" r="2.5" fill="#c8a96e" fill-opacity="0.7"/>
+          <circle cx="120" cy="210" r="2.5" fill="#c8a96e" fill-opacity="0.7"/>
+          <circle cx="255" cy="139" r="2" fill="#c8a96e" fill-opacity="0.5"/>
+          <circle cx="165" cy="139" r="2" fill="#c8a96e" fill-opacity="0.5"/>
+          <circle cx="255" cy="281" r="2" fill="#c8a96e" fill-opacity="0.5"/>
+          <circle cx="165" cy="281" r="2" fill="#c8a96e" fill-opacity="0.5"/>
+          <!-- Center -->
+          <circle cx="210" cy="210" r="8" stroke="#c8a96e" stroke-opacity="0.6" stroke-width="1" fill="none"/>
+          <circle cx="210" cy="210" r="3" fill="#c8a96e" fill-opacity="0.8"/>
+          <!-- Small tick marks on outer ring -->
+          <g stroke="#c8a96e" stroke-opacity="0.3" stroke-width="0.8">
+            <line x1="210" y1="30" x2="210" y2="42"/>
+            <line x1="210" y1="378" x2="210" y2="390"/>
+            <line x1="30" y1="210" x2="42" y2="210"/>
+            <line x1="378" y1="210" x2="390" y2="210"/>
+            <line x1="82.8" y1="82.8" x2="91.3" y2="91.3"/>
+            <line x1="337.2" y1="82.8" x2="328.7" y2="91.3"/>
+            <line x1="82.8" y1="337.2" x2="91.3" y2="328.7"/>
+            <line x1="337.2" y1="337.2" x2="328.7" y2="328.7"/>
+          </g>
+          <!-- Rotating ring -->
+          <circle cx="210" cy="210" r="168" stroke="#c8a96e" stroke-opacity="0.07" stroke-width="0.5" stroke-dasharray="4 12"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span>Core Systems</span></div>
+
+  <!-- CAPABILITIES -->
+  <section id="capabilities">
+    <div class="section-label reveal">01 — Capabilities</div>
+    <h2 class="section-title reveal reveal-delay-1">Symbolic systems<br>for <em>deep governance</em></h2>
+    <p class="section-body reveal reveal-delay-2">SIA operates across four foundational domains — each converting the archetypal and symbolic dimensions of intelligence into structured, actionable frameworks.</p>
+    <div class="capabilities-grid">
+      <div class="cap-card reveal">
+        <span class="cap-num">01</span>
+        <h3>Archetypal Intelligence</h3>
+        <p>Extracts and maps universal archetypes from narratives and dreams, producing governance-ready symbolic frameworks grounded in depth psychology.</p>
+      </div>
+      <div class="cap-card reveal reveal-delay-1">
+        <span class="cap-num">02</span>
+        <h3>Dreamworld Governance</h3>
+        <p>Constructs governance structures operating in symbolic and subconscious dimensions — including dream-derived policy mechanisms and symbolic legislative models.</p>
+      </div>
+      <div class="cap-card reveal reveal-delay-2">
+        <span class="cap-num">03</span>
+        <h3>Symbolic Energy Management</h3>
+        <p>Harvests narrative energy and routes archetypal power across systems to influence decision weighting, prioritisation, and strategic coordination.</p>
+      </div>
+      <div class="cap-card reveal reveal-delay-3">
+        <span class="cap-num">04</span>
+        <h3>Narrative Intelligence</h3>
+        <p>Generates and evaluates mythological scenarios, enabling resilient long-horizon planning and cross-system cultural alignment through mythmaking.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div style="padding: 0 4rem 5rem;">
+    <div class="stats-row">
+      <div class="stat-cell reveal">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Archetypal Patterns</span>
+      </div>
+      <div class="stat-cell reveal reveal-delay-1">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Agent Families</span>
+      </div>
+      <div class="stat-cell reveal reveal-delay-2">
+        <span class="stat-num">7</span>
+        <span class="stat-label">Symbolic Dimensions</span>
+      </div>
+      <div class="stat-cell reveal reveal-delay-3">
+        <span class="stat-num">1</span>
+        <span class="stat-label">Unified Platform</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Architecture</span></div>
+
+  <!-- ARCHITECTURE -->
+  <section class="arch-section" id="architecture">
+    <div class="arch-inner">
+      <div>
+        <div class="section-label reveal">02 — Architecture</div>
+        <h2 class="section-title reveal reveal-delay-1">Multi-agent<br><em>infrastructure</em></h2>
+        <p class="section-body reveal reveal-delay-2">SIA runs as a collection of cooperating specialised agents built on a common extensible base — discoverable, composable, and designed for symbolic orchestration at scale.</p>
+        <div class="arch-list">
+          <div class="arch-item reveal">
+            <span class="arch-idx">A</span>
+            <div>
+              <h4>Symbolic Governance Agents</h4>
+              <p>Policy advisors, symbolic legislators, and archetypal executives operating in the governance layer.</p>
+            </div>
+          </div>
+          <div class="arch-item reveal reveal-delay-1">
+            <span class="arch-idx">B</span>
+            <div>
+              <h4>Symbolic Energy Agents</h4>
+              <p>Narrative harvesters, energy converters, and distribution managers for archetypal power routing.</p>
+            </div>
+          </div>
+          <div class="arch-item reveal reveal-delay-2">
+            <span class="arch-idx">C</span>
+            <div>
+              <h4>Mythmaking & Ritual Agents</h4>
+              <p>Story engines, ritual orchestrators, and ceremonial intelligence for long-horizon scenario modelling.</p>
+            </div>
+          </div>
+          <div class="arch-item reveal reveal-delay-3">
+            <span class="arch-idx">D</span>
+            <div>
+              <h4>Coordination & Security</h4>
+              <p>Message routing through the coordinator, capability registry, and ethical verification primitives for auditability.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-diagram reveal">
+        <svg viewBox="0 0 380 400" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:380px;width:100%">
+          <defs>
+            <filter id="g2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Coordinator center -->
+          <rect x="130" y="170" width="120" height="60" rx="2" stroke="#c8a96e" stroke-opacity="0.5" stroke-width="1" fill="rgba(200,169,110,0.04)" filter="url(#g2)"/>
+          <text x="190" y="196" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="#c8a96e" fill-opacity="0.8" letter-spacing="2">COORDINATOR</text>
+          <text x="190" y="212" text-anchor="middle" font-family="'DM Mono', monospace" font-size="6.5" fill="#c8a96e" fill-opacity="0.45" letter-spacing="1">REGISTRY</text>
+          <!-- Agent nodes -->
+          <!-- A: top-left -->
+          <rect x="20" y="40" width="100" height="50" rx="2" stroke="#a8b8d0" stroke-opacity="0.25" stroke-width="0.8" fill="rgba(168,184,208,0.04)"/>
+          <text x="70" y="62" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" fill="#a8b8d0" fill-opacity="0.6" letter-spacing="1.5">GOVERNANCE</text>
+          <text x="70" y="76" text-anchor="middle" font-family="'DM Mono', monospace" font-size="6" fill="#a8b8d0" fill-opacity="0.35" letter-spacing="1">AGENTS</text>
+          <!-- B: top-right -->
+          <rect x="260" y="40" width="100" height="50" rx="2" stroke="#a8b8d0" stroke-opacity="0.25" stroke-width="0.8" fill="rgba(168,184,208,0.04)"/>
+          <text x="310" y="62" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" fill="#a8b8d0" fill-opacity="0.6" letter-spacing="1.5">ENERGY</text>
+          <text x="310" y="76" text-anchor="middle" font-family="'DM Mono', monospace" font-size="6" fill="#a8b8d0" fill-opacity="0.35" letter-spacing="1">AGENTS</text>
+          <!-- C: bottom-left -->
+          <rect x="20" y="310" width="100" height="50" rx="2" stroke="#a8b8d0" stroke-opacity="0.25" stroke-width="0.8" fill="rgba(168,184,208,0.04)"/>
+          <text x="70" y="332" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" fill="#a8b8d0" fill-opacity="0.6" letter-spacing="1.5">MYTHMAKING</text>
+          <text x="70" y="346" text-anchor="middle" font-family="'DM Mono', monospace" font-size="6" fill="#a8b8d0" fill-opacity="0.35" letter-spacing="1">AGENTS</text>
+          <!-- D: bottom-right -->
+          <rect x="260" y="310" width="100" height="50" rx="2" stroke="#a8b8d0" stroke-opacity="0.25" stroke-width="0.8" fill="rgba(168,184,208,0.04)"/>
+          <text x="310" y="332" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" fill="#a8b8d0" fill-opacity="0.6" letter-spacing="1.5">SECURITY</text>
+          <text x="310" y="346" text-anchor="middle" font-family="'DM Mono', monospace" font-size="6" fill="#a8b8d0" fill-opacity="0.35" letter-spacing="1">AGENTS</text>
+          <!-- Connection lines -->
+          <line x1="120" y1="90" x2="150" y2="170" stroke="#c8a96e" stroke-opacity="0.2" stroke-width="0.8" stroke-dasharray="3 5"/>
+          <line x1="260" y1="90" x2="230" y2="170" stroke="#c8a96e" stroke-opacity="0.2" stroke-width="0.8" stroke-dasharray="3 5"/>
+          <line x1="120" y1="310" x2="150" y2="230" stroke="#c8a96e" stroke-opacity="0.2" stroke-width="0.8" stroke-dasharray="3 5"/>
+          <line x1="260" y1="310" x2="230" y2="230" stroke="#c8a96e" stroke-opacity="0.2" stroke-width="0.8" stroke-dasharray="3 5"/>
+          <!-- Endpoint dots -->
+          <circle cx="120" cy="90" r="2.5" fill="#c8a96e" fill-opacity="0.5"/>
+          <circle cx="260" cy="90" r="2.5" fill="#c8a96e" fill-opacity="0.5"/>
+          <circle cx="120" cy="310" r="2.5" fill="#c8a96e" fill-opacity="0.5"/>
+          <circle cx="260" cy="310" r="2.5" fill="#c8a96e" fill-opacity="0.5"/>
+          <!-- Center glow dot -->
+          <circle cx="190" cy="200" r="4" fill="#c8a96e" fill-opacity="0.6" filter="url(#g2)"/>
+          <circle cx="190" cy="200" r="8" stroke="#c8a96e" stroke-opacity="0.2" stroke-width="0.8" fill="none"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span>Applications</span></div>
+
+  <!-- USE CASES -->
+  <section id="use-cases">
+    <div class="section-label reveal">03 — Applications</div>
+    <h2 class="section-title reveal reveal-delay-1">Where <em>symbolic</em><br>intelligence acts</h2>
+    <div class="cases-grid">
+      <div class="case-card reveal">
+        <span class="case-icon">◈</span>
+        <h3>Policy Simulation</h3>
+        <p>Model narrative-driven policy outcomes and test archetypal scenarios before applying decisions to operational systems — reducing risk in symbolic governance.</p>
+      </div>
+      <div class="case-card reveal reveal-delay-1">
+        <span class="case-icon">⊕</span>
+        <h3>Cross-System Alignment</h3>
+        <p>Provide symbolic context and cultural alignment signals across services to improve strategic coherence and narrative consistency at the constellation level.</p>
+      </div>
+      <div class="case-card reveal reveal-delay-2">
+        <span class="case-icon">◉</span>
+        <h3>Archetypal Research</h3>
+        <p>Platform for deep research into Jungian archetypes, narrative intelligence, and dream-augmented governance methodologies.</p>
+      </div>
+      <div class="case-card reveal reveal-delay-1">
+        <span class="case-icon">⊗</span>
+        <h3>Conscience Mapping</h3>
+        <p>Record and structure the symbolic patterns of collective conscience — creating navigable maps of shared subconscious narratives over time.</p>
+      </div>
+      <div class="case-card reveal reveal-delay-2">
+        <span class="case-icon">◇</span>
+        <h3>Dream Analysis</h3>
+        <p>Systematic capture, classification, and analysis of dream-derived signals — transforming raw subconscious data into structured intelligence products.</p>
+      </div>
+      <div class="case-card reveal reveal-delay-3">
+        <span class="case-icon">⊞</span>
+        <h3>Agent Extension</h3>
+        <p>Developers can extend agent families and register new agents via the base framework, enabling custom symbolic intelligence workflows.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="contact">
+    <h2 class="reveal">Enter the<br><em>symbolic layer</em></h2>
+    <p class="reveal reveal-delay-1">SIA is open for integration. Explore the architecture, extend the agent framework, or reach out to discuss how symbolic governance can serve your systems.</p>
+    <div class="cta-actions reveal reveal-delay-2">
+      <a class="btn-primary" href="mailto:contact@sia-platform.com">Request Access</a>
+      <a class="btn-ghost" href="#">Documentation</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-brand">SIA</span>
+  <ul class="footer-links">
+    <li><a href="#capabilities">Capabilities</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#use-cases">Applications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 SIA — Symbolic Intelligence & Archetypal Systems</span>
+</footer>
+
+<script>
+// ── Custom cursor ──
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+let rx = 0, ry = 0;
+(function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) *.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a, button, .cap-card, .case-card, .arch-item').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width = '56px'; ring.style.height = '56px'; ring.style.opacity = '0.5'; });
+  el.addEventListener('mouseleave', () => { ring.style.width = '32px'; ring.style.height = '32px'; ring.style.opacity = '1'; });
+});
+
+// ── Star field ──
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  stars = Array.from({length: 160}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 0.9 + 0.1,
+    o: Math.random() * 0.5 + 0.1,
+    s: Math.random() * 0.4 + 0.05,
+    phase: Math.random() * Math.PI * 2
+  }));
+}
+resize();
+window.addEventListener('resize', resize);
+let t = 0;
+(function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    const a = s.o * (0.6 + 0.4 * Math.sin(t * s.s + s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(200,220,255,${a})`;
+    ctx.fill();
+  });
+  t += 0.012;
+  requestAnimationFrame(drawStars);
+})();
+
+// ── Scroll reveals ──
+const revealEls = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+revealEls.forEach(el => obs.observe(el));
+
+// ── Rotating sigil dashes ──
+(function rotateSigil() {
+  const circles = document.querySelectorAll('.sigil-wrap svg circle[stroke-dasharray]');
+  let angle = 0;
+  setInterval(() => {
+    angle += 0.15;
+    circles.forEach(c => { c.setAttribute('transform', `rotate(${angle}, 210, 210)`); });
+  }, 16);
+})();
+</script>
+</body>
+</html>
